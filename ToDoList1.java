@@ -26,13 +26,13 @@ class Task {
     }
 }
 
-public class SwingToDoList extends JFrame {
+public class ToDoList1 extends JFrame {
     private ArrayList<Task> tasks;
     private DefaultListModel<String> model;
     private JList<String> taskList;
     private JTextField taskField;
 
-    public SwingToDoList() {
+    public ToDoList1() {
         tasks = new ArrayList<>();
         model = new DefaultListModel<>();
         taskList = new JList<>(model);
@@ -90,7 +90,7 @@ public class SwingToDoList extends JFrame {
         mainPanel.add(new JScrollPane(taskList), BorderLayout.CENTER);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        setTitle("Swing To-Do List");
+        setTitle("Carl To-Do UI : List Edition");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setContentPane(mainPanel);
         pack();
@@ -113,7 +113,7 @@ public class SwingToDoList extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new SwingToDoList();
+                new ToDoList1();
             }
         });
     }
