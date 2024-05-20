@@ -17,7 +17,7 @@ public class ToDoTree2 extends JFrame {
 
     public ToDoTree2() {
         setTitle("Carl To-Do UI : Tree Edition");
-        setSize(600, 400);
+        setSize(700, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -34,7 +34,7 @@ public class ToDoTree2 extends JFrame {
         treeModel = new DefaultTreeModel(root);
         tree = new JTree(treeModel);
 
-        taskField = new JTextField(25);
+        taskField = new JTextField(18);
         String[] priorities = {"High Priority", "Medium Priority", "Low Priority"};
         priorityComboBox = new JComboBox<>(priorities);
 
@@ -50,6 +50,19 @@ public class ToDoTree2 extends JFrame {
             }
         });
 
+        JButton markDoneButton = new JButton("Finished");
+        markDoneButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                markTaskAsDone();
+            }
+        });
+
+        JButton removeStrikethroughButton = new JButton("Undo");
+        removeStrikethroughButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                removeStrikethrough();
+            }
+        });
 
         JPanel inputPanel = new JPanel();
         inputPanel.add(new JLabel("Task:"));
@@ -57,6 +70,8 @@ public class ToDoTree2 extends JFrame {
         inputPanel.add(new JLabel("Priority:"));
         inputPanel.add(priorityComboBox);
         inputPanel.add(addButton);
+        inputPanel.add(markDoneButton);
+        inputPanel.add(removeStrikethroughButton);
 
         getContentPane().add(new JScrollPane(tree), BorderLayout.CENTER);
         getContentPane().add(inputPanel, BorderLayout.SOUTH);
@@ -78,10 +93,29 @@ public class ToDoTree2 extends JFrame {
         treeModel.reload();
     }
 
-    
+    private void markTaskAsDone() {
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+        if (selectedNode != null && selectedNode.getParent() != null && selectedNode != root) {
+            String task = (String) selectedNode.getUserObject();
+            selectedNode.setUserObject("<html><strike>" + task + "</strike></html>");
+            treeModel.nodeChanged(selectedNode);
+        }
+    }
+
+    private void removeStrikethrough() {
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+        if (selectedNode != null && selectedNode.getParent() != null && selectedNode != root) {
+            String task = (String) selectedNode.getUserObject();
+            if (task.startsWith("<html><strike>") && task.endsWith("</strike></html>")) {
+                task = task.substring(14, task.length() - 15); // Remove the <html><strike> and </strike></html>
+                selectedNode.setUserObject(task);
+                treeModel.nodeChanged(selectedNode);
+            }
+        }
+    }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
                 new ToDoTree2().setVisible(true);
             }
