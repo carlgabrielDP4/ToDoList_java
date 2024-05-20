@@ -4,6 +4,7 @@ import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.TimeUnit;
 
 public class ToDoTree2 extends JFrame {
     private JTree tree;
@@ -14,6 +15,9 @@ public class ToDoTree2 extends JFrame {
     private DefaultMutableTreeNode lowPriorityNode;
     private JTextField taskField;
     private JComboBox<String> priorityComboBox;
+    private JLabel stopwatchLabel;
+    private Timer timer;
+    private long startTime;
 
     public ToDoTree2() {
         setTitle("Carl To-Do UI : Tree Edition");
@@ -64,6 +68,21 @@ public class ToDoTree2 extends JFrame {
             }
         });
 
+        stopwatchLabel = new JLabel("You Have Been Locked In For 0 Hours & 0 Minutes & 0 Seconds");
+        startTime = System.currentTimeMillis();
+
+        timer = new Timer(1000, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                long elapsedMillis = System.currentTimeMillis() - startTime;
+                String elapsedTime = formatElapsedTime(elapsedMillis);
+                stopwatchLabel.setText(elapsedTime);
+            }
+        });
+        timer.start();
+
+        JPanel stopwatchPanel = new JPanel();
+        stopwatchPanel.add(stopwatchLabel);
+
         JPanel inputPanel = new JPanel();
         inputPanel.add(new JLabel("Task:"));
         inputPanel.add(taskField);
@@ -73,6 +92,7 @@ public class ToDoTree2 extends JFrame {
         inputPanel.add(markDoneButton);
         inputPanel.add(removeStrikethroughButton);
 
+        getContentPane().add(stopwatchPanel, BorderLayout.NORTH);
         getContentPane().add(new JScrollPane(tree), BorderLayout.CENTER);
         getContentPane().add(inputPanel, BorderLayout.SOUTH);
     }
@@ -112,6 +132,13 @@ public class ToDoTree2 extends JFrame {
                 treeModel.nodeChanged(selectedNode);
             }
         }
+    }
+
+    private String formatElapsedTime(long elapsedMillis) {
+        long hours = TimeUnit.MILLISECONDS.toHours(elapsedMillis);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedMillis) % 60;
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedMillis) % 60;
+        return String.format("You Have Been Locked In For %d Hours & %d Minutes & %d Seconds", hours, minutes, seconds);
     }
 
     public static void main(String[] args) {
